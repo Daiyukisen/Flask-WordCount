@@ -45,5 +45,5 @@ def count():
     return render_template('home.html')
 
 if __name__ == "__main__":
-    app.secret_key = 'your_secret_key_here'
+    app.secret_key = 'it6finals'
     app.run(debug=True)
