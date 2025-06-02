@@ -1,7 +1,10 @@
 from flask import Flask, render_template, url_for, request
+from routes import sentiment_bp
 import operator
 
 app = Flask(__name__)
+
+app.register_blueprint(sentiment_bp)
 
 # home
 @app.route('/')
