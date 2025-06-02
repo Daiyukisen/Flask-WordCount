@@ -1,17 +1,30 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, request
 from routes import sentiment_bp
+from models import db
 import operator
 
 app = Flask(__name__)
 
+# Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sentiment.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize Database
+db.init_app(app)
+
+# Ensure database tables are created at startup
+with app.app_context():
+    db.create_all()
+
+# Register API Routes
 app.register_blueprint(sentiment_bp)
 
-# home
+# Home Route
 @app.route('/')
 def home():
     return render_template('home.html')
 
-# Word Count
+# Word Count Feature
 @app.route('/count', methods=['GET', 'POST'])
 def count():
     if request.method == 'POST':
@@ -21,17 +34,14 @@ def count():
 
         word_disc = {}
         for word in word_list:
-            if word in word_disc:
-                word_disc[word] += 1
-            else:
-                word_disc[word] = 1
+            word_disc[word] = word_disc.get(word, 0) + 1
 
         sort_list = sorted(word_disc.items(), key=operator.itemgetter(1), reverse=True)
         return render_template('count.html', fulltext=data, words=list_length, worddisc=sort_list)
 
     return render_template('home.html')
 
-
+# Run Flask App
 if __name__ == "__main__":
-    app.secret_key = '0b579d376dc5dde856e0a0ddca6f403cc8707924ff8d6d31'
+    app.secret_key = 'it6finals'
     app.run(debug=True)
