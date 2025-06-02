@@ -1,24 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <title>WordCount - Home</title>
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
-      </div>
-    </nav>
+<div class="container">
+    <div class="jumbotron text-center">
+        <h2>WordCount App</h2>
+        <p class="lead">A simple Flask app for counting words.</p>
 
-    <div class="container">
-        <div class="jumbotron text-center">
-            <h2>WordCount App</h2>
-            <p class="lead">A simple Flask app for counting words and analyzing sentiment.</p>
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
 
-            <a href="{{ url_for('count') }}" class="btn btn-primary btn-lg">Start Word Count</a>
-        </div>
+        <form action="{{ url_for('count') }}" method="post">
+            <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
+            <br>
+            <input type="submit" class="btn btn-success btn-lg" value="Count Words">
+        </form>
     </div>
-</body>
-</html>
+</div>

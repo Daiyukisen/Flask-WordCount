@@ -1,44 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <title>WordCount - Results</title>
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
-      </div>
-    </nav>
+<div class="container">
+    <div class="jumbotron text-center">
+        <h2>Word Count Results</h2>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Count New Words</a>
+        <a href="{{ url_for('sentiment_bp.sentiment_page') }}" class="btn btn-primary">Analyze Sentiment</a>
 
-    <div class="container">
-        <div class="jumbotron text-center">
-            <h2>Word Count Results</h2>
-            <a href="{{ url_for('home') }}" class="btn btn-secondary">Count New Words</a>
-            <a href="{{ url_for('sentiment_bp.sentiment_page') }}" class="btn btn-primary">Analyze Sentiment</a>
+        <hr>
 
-            <hr>
+        <h2>Your Text:</h2>
+        <p>{{ fulltext }}</p>
 
-            <h2>Your Text:</h2>
-            <p>{{ fulltext }}</p>
+        <hr>
 
-            <hr>
+        <h2>Total Words Counted:</h2>
+        <p><strong>{{ words }}</strong></p>
 
-            <h2>Total Words Counted:</h2>
-            <p><strong>{{ words }}</strong></p>
+        <hr>
 
-            <hr>
-
-            <ul class="list-group">
-                {% for word, value in worddisc %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ word }}
-                    <span class="badge badge-primary badge-pill">{{ value }}</span>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
+        <ul class="list-group">
+            {% for word, value in worddisc %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ word }}
+                <span class="badge badge-primary badge-pill">{{ value }}</span>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-</body>
-</html>
+</div>
