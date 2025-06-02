@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <title>Sentiment Analysis</title>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+      </div>
+    </nav>
+
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h2>Sentiment Analysis</h2>
+            <p class="lead">Enter text to analyze its sentiment.</p>
+
+            <form action="{{ url_for('sentiment_bp.create_sentiment') }}" method="post">
+                <textarea class="form-control" name="text" cols="40" rows="5" placeholder="Type your sentence here..."></textarea>
+                <br>
+                <input type="submit" class="btn btn-primary btn-lg" value="Analyze Sentiment">
+            </form>
+
+            <hr>
+            <a href="{{ url_for('count') }}" class="btn btn-secondary">Back to Word Count</a>
+        </div>
+    </div>
+</body>
+</html>
