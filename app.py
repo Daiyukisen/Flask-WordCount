@@ -38,9 +38,21 @@ def count():
 
         # Sentiment analysis logic
         sentiment_score = TextBlob(data).sentiment.polarity
-        sentiment_text = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
+        if sentiment_score > 0.1:
+            sentiment_text = "Positive"
+        elif sentiment_score < -0.1:
+            sentiment_text = "Negative"
+        else:
+            sentiment_text = "Neutral"
 
-        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=sentiment_text, score=sentiment_score)
+        return render_template(
+            'count.html', 
+            fulltext=data, 
+            words=list_length, 
+            worddisc=sorted_word_list, 
+            sentiment=sentiment_text, 
+            score=sentiment_score
+        )
 
     return render_template('home.html')
 

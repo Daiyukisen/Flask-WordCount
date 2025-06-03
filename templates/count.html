@@ -20,7 +20,7 @@
              <form action="{{ url_for('count') }}" method="post">
                 <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
                 <br>
-                <input type="submit" class="btn btn-success btn-lg" value="Count!">
+                <input type="submit" class="btn btn-success btn-lg" value="Analyze Now">
              </form>
          </div>
 
@@ -28,8 +28,8 @@
          <div class="jumbotron text-center">
              <h2>Analysis Results</h2>
              
-             <h3>Word Count:</h3>
-             <p><strong>{{ words }}</strong> words</p>
+             <h3>Total Word Count:</h3>
+             <p><strong>{{ words }} words</strong></p>
 
              <h3>Most Frequent Words:</h3>
              <ul class="list-group">

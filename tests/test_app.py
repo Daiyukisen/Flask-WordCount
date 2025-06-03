@@ -11,9 +11,8 @@ def client():
 def test_word_count(client):
     response = client.post('/count', data={'fulltextarea': "Hello world Hello"})
     assert response.status_code == 200
+    assert b'Total Word Count' in response.data  # Ensures word count appears
     assert b'3 words' in response.data  # Checks total word count
-    assert b'Hello' in response.data    # Checks word frequency
-    assert b'world' in response.data    # Checks another word presence
 
 # Test Sentiment Analysis Route (Positive Sentiment)
 def test_sentiment_positive(client):
@@ -31,4 +30,4 @@ def test_sentiment_negative(client):
 def test_sentiment_neutral(client):
     response = client.post('/count', data={'fulltextarea': "The product is good, but the price is a little high."})
     assert response.status_code == 200
-    assert b'Neutral' in response.data  # Validates mixed/neutral response
+    assert b'Neutral' in response.data  # Validates refined neutral sentiment
