@@ -4,7 +4,6 @@ from textblob import TextBlob
 
 db = SQLAlchemy()
 
-
 class SentimentAnalysis(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
@@ -12,7 +11,13 @@ class SentimentAnalysis(db.Model):
     score = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, text):
-        self.text = text.strip()
-        self.score = TextBlob(text).sentiment.polarity
-        self.sentiment = "Positive" if self.score > 0 else "Negative" if self.score < 0 else "Neutral"
+    def update_sentiment(self, new_text):
+        """ Updates sentiment based on new text input """
+        self.text = new_text.strip()
+        self.score = TextBlob(new_text).sentiment.polarity
+        self.sentiment = (
+            "Positive" if self.score > 0.2 
+            else "Negative" if self.score < -0.2 
+            else "Neutral"
+        )
+        self.timestamp = datetime.utcnow()

@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from models import db
-import operator
-from textblob import TextBlob  # Import for sentiment analysis
+from routes import sentiment_bp  # Import API routes
 
 app = Flask(__name__)
 
@@ -16,60 +15,12 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# Register API Routes
+app.register_blueprint(sentiment_bp, url_prefix="/api")
+
 # Home Route
 @app.route('/')
 def home():
-    return render_template('home.html')
-
-# Word Count & Sentiment Analysis
-@app.route('/count', methods=['GET', 'POST'])
-def count():
-    if request.method == 'POST':
-        data = request.form.get('fulltextarea', '').strip()
-        if not data:
-            return render_template('home.html', error="Please enter text to analyze.")
-
-        # Word count logic
-        word_list = data.split()
-        list_length = len(word_list)
-
-        word_disc = {word: word_list.count(word) for word in set(word_list)}
-        sorted_word_list = sorted(word_disc.items(), key=lambda x: (-x[1], x[0]))  # Sort by frequency, then alphabetically
-
-        # Sentiment analysis logic
-        sentiment_score = TextBlob(data).sentiment.polarity
-        if sentiment_score is None:
-            sentiment_text = "Unknown"
-        elif sentiment_score > 0.2:
-            sentiment_text = "Positive"
-        elif sentiment_score < -0.2:
-            sentiment_text = "Negative"
-        else:
-            sentiment_text = "Neutral"
-
-        # Count sentiment-related words
-        positive_count, negative_count, neutral_count = 0, 0, 0
-        for word in word_list:
-            word_sentiment = TextBlob(word).sentiment.polarity if word else 0
-            if word_sentiment > 0.2:
-                positive_count += 1
-            elif word_sentiment < -0.2:
-                negative_count += 1
-            else:
-                neutral_count += 1
-
-        return render_template(
-            'count.html', 
-            fulltext=data, 
-            words=list_length, 
-            worddisc=sorted_word_list, 
-            sentiment=sentiment_text, 
-            score=sentiment_score,
-            positive_count=positive_count, 
-            negative_count=negative_count, 
-            neutral_count=neutral_count
-        )
-
     return render_template('home.html')
 
 if __name__ == "__main__":
