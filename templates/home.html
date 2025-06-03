@@ -7,26 +7,26 @@
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
-      </div>
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+        </div>
     </nav>
 
-     <div class="container">
-         <div class="jumbotron text-center">
-             <h2>WordCount & Sentiment Analysis</h2>
-             <p class="lead">Enter text, count words, and analyze sentiment.</p>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h2>WordCount & Sentiment Analysis</h2>
+            <p class="lead">Enter text, count words, and analyze sentiment.</p>
 
-             {% if error %}
-             <div class="alert alert-danger">{{ error }}</div>
-             {% endif %}
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
 
-             <form action="{{ url_for('count') }}" method="post">
+            <form action="{{ url_for('count') }}" method="post">
                 <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
                 <br>
                 <input type="submit" class="btn btn-success btn-lg" value="Analyze Now">
             </form>
-         </div>
-     </div>
+        </div>
+    </div>
 </body>
 </html>

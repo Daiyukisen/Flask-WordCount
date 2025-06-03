@@ -3,48 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <title>WordCount - Home</title>
+    <title>WordCount - Results</title>
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+            </div>
         </div>
-      </div>
     </nav>
 
-     <div class="container">
-         <div class="jumbotron text-center">
-             <h2>WordCount App</h2>
-             <p class="lead">This is a simple Flask - WORD COUNT APP.</p>
-
-             <form action="{{ url_for('count') }}" method="post">
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h2>WordCount App</h2>
+            <p class="lead">This is a simple Flask - WORD COUNT APP.</p>
+            <form action="{{ url_for('count') }}" method="post">
                 <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
                 <br>
                 <input type="submit" class="btn btn-success btn-lg" value="Count!">
-             </form>
-         </div>
+            </form>
+        </div>
 
-         {% if fulltext %}
+        {% if fulltext %}
         <div class="jumbotron text-center">
             <h2>Analysis Results</h2>
-
             <h3>Total Word Count:</h3>
             <p><strong>{{ words }} words</strong></p>
 
             <h3>Most Frequent Words:</h3>
             <ul class="list-group">
                 {% for word, value in worddisc %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ word }}
-                    <span class="badge badge-primary badge-pill">{{ value }}</span>
-                </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ word }}
+                        <span class="badge badge-primary badge-pill">{{ value }}</span>
+                    </li>
                 {% endfor %}
             </ul>
 
             <hr>
-
             <h3>Sentiment Analysis:</h3>
             <p><strong>Overall Sentiment:</strong> {{ sentiment }}</p>
             <p><strong>Score:</strong> {{ score }}</p>
@@ -53,20 +50,20 @@
             <div class="row text-center">
                 <div class="col-md-4">
                     <h5>Positive Words</h5>
-                    <p><span class="badge badge-success">{{ positive_count or 0 }}</span></p>
+                    <p><span class="badge badge-success">{{ positive_count }}</span></p>
                 </div>
                 <div class="col-md-4">
                     <h5>Negative Words</h5>
-                    <p><span class="badge badge-danger">{{ negative_count or 0 }}</span></p>
+                    <p><span class="badge badge-danger">{{ negative_count }}</span></p>
                 </div>
                 <div class="col-md-4">
                     <h5>Neutral Words</h5>
-                    <p><span class="badge badge-secondary">{{ neutral_count or 0 }}</span></p>
+                    <p><span class="badge badge-secondary">{{ neutral_count }}</span></p>
                 </div>
             </div>
         </div>
         {% endif %}
-     </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
