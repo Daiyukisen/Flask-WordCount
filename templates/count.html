@@ -1,53 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <title>WordCount & Sentiment Analysis</title>
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
-      </div>
-    </nav>
+<h3>Sentiment Analysis:</h3>
+<p><strong>Overall Sentiment:</strong> {{ sentiment }}</p>
+<p><strong>Score:</strong> {{ score }}</p>
 
-     <div class="container">
-         <div class="jumbotron text-center">
-             <h2>Word Count & Sentiment Analysis</h2>
-             <p class="lead">Enter text, count words, and analyze sentiment.</p>
-
-             <form action="{{ url_for('count') }}" method="post">
-                <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
-                <br>
-                <input type="submit" class="btn btn-success btn-lg" value="Analyze Now">
-             </form>
-         </div>
-
-         {% if fulltext %}
-         <div class="jumbotron text-center">
-             <h2>Analysis Results</h2>
-             
-             <h3>Total Word Count:</h3>
-             <p><strong>{{ words }} words</strong></p>
-
-             <h3>Most Frequent Words:</h3>
-             <ul class="list-group">
-                 {% for word, value in worddisc %}
-                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                     {{ word }}
-                     <span class="badge badge-primary badge-pill">{{ value }}</span>
-                 </li>
-                 {% endfor %}
-             </ul>
-
-             <hr>
-
-             <h3>Sentiment Analysis:</h3>
-             <p><strong>Sentiment:</strong> {{ sentiment }}</p>
-             <p><strong>Score:</strong> {{ score }}</p>
-         </div>
-         {% endif %}
-     </div>
-</body>
-</html>
+<h4>Sentiment Breakdown:</h4>
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        Positive Words
+        <span class="badge badge-success badge-pill">{{ positive_count }}</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        Negative Words
+        <span class="badge badge-danger badge-pill">{{ negative_count }}</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        Neutral Words
+        <span class="badge badge-secondary badge-pill">{{ neutral_count }}</span>
+    </li>
+</ul>
