@@ -25,7 +25,10 @@ def create_sentiment():
 @sentiment_bp.route('/sentiment', methods=['GET'])
 def get_sentiment_history():
     entries = SentimentAnalysis.query.all()
-    history = [{"id": entry.id, "text": entry.text, "sentiment": entry.sentiment, "score": entry.score, "timestamp": entry.timestamp} for entry in entries]
+    history = [
+        {"id": entry.id, "text": entry.text, "sentiment": entry.sentiment, "score": entry.score, "timestamp": entry.timestamp}
+        for entry in entries
+    ]
     return jsonify({"message": "Sentiment history retrieved", "data": history}), 200
 
 # Update Sentiment Entry (PUT)
