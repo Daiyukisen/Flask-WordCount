@@ -34,11 +34,13 @@ def count():
         list_length = len(word_list)
 
         word_disc = {word: word_list.count(word) for word in set(word_list)}
-        sorted_word_list = sorted(word_disc.items(), key=lambda x: x[1], reverse=True)
+        sorted_word_list = sorted(word_disc.items(), key=lambda x: (-x[1], x[0]))  # Sort by frequency, then alphabetically
 
         # Sentiment analysis logic
         sentiment_score = TextBlob(data).sentiment.polarity
-        if sentiment_score > 0.2:
+        if sentiment_score is None:
+            sentiment_text = "Unknown"
+        elif sentiment_score > 0.2:
             sentiment_text = "Positive"
         elif sentiment_score < -0.2:
             sentiment_text = "Negative"
@@ -48,7 +50,7 @@ def count():
         # Count sentiment-related words
         positive_count, negative_count, neutral_count = 0, 0, 0
         for word in word_list:
-            word_sentiment = TextBlob(word).sentiment.polarity
+            word_sentiment = TextBlob(word).sentiment.polarity if word else 0
             if word_sentiment > 0.2:
                 positive_count += 1
             elif word_sentiment < -0.2:
