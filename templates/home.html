@@ -1,16 +1,32 @@
-<div class="container">
-    <div class="jumbotron text-center">
-        <h2>WordCount App</h2>
-        <p class="lead">A simple Flask app for counting words.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <title>WordCount - Home</title>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+      </div>
+    </nav>
 
-        {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
+     <div class="container">
+         <div class="jumbotron text-center">
+             <h2>WordCount & Sentiment Analysis</h2>
+             <p class="lead">Enter text, count words, and analyze sentiment.</p>
 
-        <form action="{{ url_for('count') }}" method="post">
-            <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
-            <br>
-            <input type="submit" class="btn btn-success btn-lg" value="Count Words">
-        </form>
-    </div>
-</div>
+             {% if error %}
+             <div class="alert alert-danger">{{ error }}</div>
+             {% endif %}
+
+             <form action="{{ url_for('count') }}" method="post">
+                <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
+                <br>
+                <input type="submit" class="btn btn-success btn-lg" value="Analyze Now">
+             </form>
+         </div>
+     </div>
+</body>
+</html>

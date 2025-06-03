@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
-from routes import sentiment_bp
 from models import db
 import operator
+from textblob import TextBlob  # Import for sentiment analysis
 
 app = Flask(__name__)
 
@@ -12,19 +12,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize Database
 db.init_app(app)
 
-# Ensure tables exist
+# Ensure tables exist before processing routes
 with app.app_context():
     db.create_all()
-
-# Register API Routes
-app.register_blueprint(sentiment_bp)
 
 # Home Route
 @app.route('/')
 def home():
     return render_template('home.html')
 
-# Word Count Feature
+# Word Count & Sentiment Analysis
 @app.route('/count', methods=['GET', 'POST'])
 def count():
     if request.method == 'POST':
@@ -32,15 +29,18 @@ def count():
         if not data:
             return render_template('home.html', error="Please enter text to analyze.")
 
+        # Word count logic
         word_list = data.split()
         list_length = len(word_list)
 
-        word_disc = {}
-        for word in word_list:
-            word_disc[word] = word_disc.get(word, 0) + 1
+        word_disc = {word: word_list.count(word) for word in set(word_list)}
+        sorted_word_list = sorted(word_disc.items(), key=lambda x: x[1], reverse=True)
 
-        sort_list = sorted(word_disc.items(), key=lambda x: x[1], reverse=True)
-        return render_template('count.html', fulltext=data, words=list_length, worddisc=sort_list)
+        # Sentiment analysis logic
+        sentiment_score = TextBlob(data).sentiment.polarity
+        sentiment_text = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
+
+        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=sentiment_text, score=sentiment_score)
 
     return render_template('home.html')
 

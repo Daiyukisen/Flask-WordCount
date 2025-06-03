@@ -4,6 +4,7 @@ from textblob import TextBlob
 
 db = SQLAlchemy()
 
+
 class SentimentAnalysis(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
