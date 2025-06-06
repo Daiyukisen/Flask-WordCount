@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, SentimentAnalysis
+from textblob import TextBlob
 
 sentiment_bp = Blueprint('sentiment_bp', __name__)
 

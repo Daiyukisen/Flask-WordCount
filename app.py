@@ -1,17 +1,22 @@
-from flask import Flask, render_template, request
-from models import db
+from flask import Flask, render_template, request, redirect, url_for, flash
+from models import db, SentimentAnalysis
 from textblob import TextBlob
+from routes import sentiment_bp
 
 app = Flask(__name__)
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sentiment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'it6finals'
 
 # Initialize Database
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+# Register Blueprint for API routes
+app.register_blueprint(sentiment_bp)
 
 # Home Route
 @app.route('/')
@@ -40,10 +45,60 @@ def count():
 
         sentiment_text = "Positive" if sentiment_score > 0.2 else "Negative" if sentiment_score < -0.2 else "Neutral"
 
-        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=sentiment_text, score=sentiment_score)
+        # Sentiment breakdown counts and scores
+        positive_words = [word for word in word_list if TextBlob(word).sentiment.polarity > 0]
+        negative_words = [word for word in word_list if TextBlob(word).sentiment.polarity < 0]
+        neutral_words = [word for word in word_list if TextBlob(word).sentiment.polarity == 0]
+
+        positive_count = len(positive_words)
+        negative_count = len(negative_words)
+        neutral_count = len(neutral_words)
+
+        positive_score = sum(TextBlob(word).sentiment.polarity for word in positive_words)
+        negative_score = sum(TextBlob(word).sentiment.polarity for word in negative_words)
+        neutral_score = sum(TextBlob(word).sentiment.polarity for word in neutral_words)
+
+        # Save sentiment analysis result to database
+        new_entry = SentimentAnalysis(text=data)
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=sentiment_text, score=sentiment_score,
+                               positive_count=positive_count, negative_count=negative_count, neutral_count=neutral_count,
+                               positive_score=positive_score, negative_score=negative_score, neutral_score=neutral_score)
 
     return render_template('home.html')
 
+# Sentiment History Page
+@app.route('/sentiments')
+def sentiment_history():
+    entries = SentimentAnalysis.query.order_by(SentimentAnalysis.timestamp.desc()).all()
+    return render_template('sentiment_history.html', entries=entries)
+
+# Update Sentiment Entry
+@app.route('/sentiments/update/<int:id>', methods=['POST'])
+def update_sentiment_entry(id):
+    entry = SentimentAnalysis.query.get_or_404(id)
+    new_text = request.form.get('text', '').strip()
+    if not new_text:
+        flash('Text cannot be empty.', 'danger')
+        return redirect(url_for('sentiment_history'))
+
+    entry.text = new_text
+    entry.score = TextBlob(new_text).sentiment.polarity
+    entry.sentiment = "Positive" if entry.score > 0 else "Negative" if entry.score < 0 else "Neutral"
+    db.session.commit()
+    flash('Sentiment entry updated successfully.', 'success')
+    return redirect(url_for('sentiment_history'))
+
+# Delete Sentiment Entry
+@app.route('/sentiments/delete/<int:id>', methods=['POST'])
+def delete_sentiment_entry(id):
+    entry = SentimentAnalysis.query.get_or_404(id)
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Sentiment entry deleted successfully.', 'success')
+    return redirect(url_for('sentiment_history'))
+
 if __name__ == "__main__":
-    app.secret_key = 'it6finals'
     app.run(debug=True)

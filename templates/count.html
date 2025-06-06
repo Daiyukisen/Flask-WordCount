@@ -8,31 +8,30 @@
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
-            </div>
+            <a class="navbar-brand" href="{{ url_for('home') }}">WordCount App</a>
+            <a class="btn btn-outline-light ml-auto" href="{{ url_for('sentiment_history') }}">Sentiment History</a>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mt-4">
         <div class="jumbotron text-center">
             <h2>WordCount App</h2>
-            <p class="lead">This is a simple Flask - WORD COUNT APP.</p>
+            <p class="lead">WORD COUNT AND ANALYSIS APP</p>
             <form action="{{ url_for('count') }}" method="post">
                 <textarea class="form-control" name="fulltextarea" cols="40" rows="10"></textarea>
                 <br>
-                <input type="submit" class="btn btn-success btn-lg" value="Count!">
+                <input type="submit" class="btn btn-success btn-lg" value="ANALYZE NOW!">
             </form>
         </div>
 
         {% if fulltext %}
-        <div class="jumbotron text-center">
+        <div class="jumbotron">
             <h2>Analysis Results</h2>
             <h3>Total Word Count:</h3>
             <p><strong>{{ words }} words</strong></p>
 
             <h3>Most Frequent Words:</h3>
-            <ul class="list-group">
+            <ul class="list-group mb-4">
                 {% for word, value in worddisc %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ word }}
@@ -47,20 +46,32 @@
             <p><strong>Score:</strong> {{ score }}</p>
 
             <h4>Sentiment Breakdown:</h4>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <h5>Positive Words</h5>
-                    <p><span class="badge badge-success">{{ positive_count }}</span></p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Negative Words</h5>
-                    <p><span class="badge badge-danger">{{ negative_count }}</span></p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Neutral Words</h5>
-                    <p><span class="badge badge-secondary">{{ neutral_count }}</span></p>
-                </div>
-            </div>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Sentiment</th>
+                        <th>Count</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Positive Words</td>
+                        <td><span class="badge badge-success">{{ positive_count }}</span></td>
+                        <td>{{ positive_score if positive_score is defined else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Negative Words</td>
+                        <td><span class="badge badge-danger">{{ negative_count }}</span></td>
+                        <td>{{ negative_score if negative_score is defined else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Neutral Words</td>
+                        <td><span class="badge badge-secondary">{{ neutral_count }}</span></td>
+                        <td>{{ neutral_score if neutral_score is defined else 'N/A' }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         {% endif %}
     </div>
