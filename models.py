@@ -12,6 +12,10 @@ class SentimentAnalysis(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, text):
+        super().__init__()
         self.text = text.strip() if text else ""
-        self.score = TextBlob(self.text).sentiment.polarity if text else 0
-        self.sentiment = "Positive" if self.score > 0 else "Negative" if self.score < 0 else "Neutral"
+        self.calculate_sentiment()
+
+    def calculate_sentiment(self):
+        self.score = TextBlob(self.text).sentiment.polarity if self.text else 0
+        self.sentiment = "Positive" if self.score > 0.2 else "Negative" if self.score < -0.2 else "Neutral"

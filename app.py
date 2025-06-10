@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from models import db, SentimentAnalysis
+from collections import Counter
 from textblob import TextBlob
 from routes import sentiment_bp
 
@@ -31,19 +32,17 @@ def count():
         if not data:
             return render_template('home.html', error="Please enter text to analyze.")
 
-        # Word count logic
+        # Word count logic using Counter for performance
         word_list = data.split()
         list_length = len(word_list)
-        word_disc = {word: word_list.count(word) for word in set(word_list)}
+        word_disc = Counter(word_list)
         sorted_word_list = sorted(word_disc.items(), key=lambda x: (-x[1], x[0]))
 
-        # Sentiment analysis logic
+        # Create new entry and calculate sentiment using model method
         try:
-            sentiment_score = TextBlob(data).sentiment.polarity
+            new_entry = SentimentAnalysis(text=data)
         except Exception as e:
             return render_template('home.html', error=f"Error processing sentiment: {str(e)}")
-
-        sentiment_text = "Positive" if sentiment_score > 0.2 else "Negative" if sentiment_score < -0.2 else "Neutral"
 
         # Sentiment breakdown counts and scores
         positive_words = [word for word in word_list if TextBlob(word).sentiment.polarity > 0]
@@ -59,11 +58,10 @@ def count():
         neutral_score = sum(TextBlob(word).sentiment.polarity for word in neutral_words)
 
         # Save sentiment analysis result to database
-        new_entry = SentimentAnalysis(text=data)
         db.session.add(new_entry)
         db.session.commit()
 
-        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=sentiment_text, score=sentiment_score,
+        return render_template('count.html', fulltext=data, words=list_length, worddisc=sorted_word_list, sentiment=new_entry.sentiment, score=new_entry.score,
                                positive_count=positive_count, negative_count=negative_count, neutral_count=neutral_count,
                                positive_score=positive_score, negative_score=negative_score, neutral_score=neutral_score)
 
