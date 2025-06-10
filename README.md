@@ -18,7 +18,6 @@ To use this project, your computer needs:
 
 - Python 3.7.1 or higher
 - Flask 1.0.2 or higher
-- Other dependencies listed in `requirements.txt` (if applicable)
 
 You can install Flask and other dependencies using pip:
 
