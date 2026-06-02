@@ -15,43 +15,104 @@ def create_sentiment():
     db.session.add(new_entry)
     db.session.commit()
 
-    return jsonify({"message": "Sentiment saved", "data": {"id": new_entry.id, "text": new_entry.text, "sentiment": new_entry.sentiment, "score": new_entry.score}}), 201
+    return jsonify({
+        "message": "Sentiment saved",
+        "data": {
+            "id": new_entry.id,
+            "text": new_entry.text,
+            "sentiment": new_entry.sentiment,
+            "score": new_entry.score
+        }
+    }), 201
+
 
 # Retrieve Sentiment History (API)
 @sentiment_bp.route('/sentiment', methods=['GET'])
 def get_sentiment_history():
     entries = SentimentAnalysis.query.all()
-    history = [{"id": entry.id, "text": entry.text, "sentiment": entry.sentiment, "score": entry.score, "timestamp": entry.timestamp} for entry in entries]
 
-    return jsonify({"message": "Sentiment history retrieved", "data": history}), 200
+    history = [
+        {
+            "id": entry.id,
+            "text": entry.text,
+            "sentiment": entry.sentiment,
+            "score": entry.score,
+            "timestamp": str(entry.timestamp)
+        }
+        for entry in entries
+    ]
+
+    return jsonify({
+        "message": "Sentiment history retrieved",
+        "data": history
+    }), 200
+
+
+# Retrieve Single Sentiment Entry (API)
+@sentiment_bp.route('/sentiment/<int:id>', methods=['GET'])
+def get_sentiment(id):
+    entry = SentimentAnalysis.query.get(id)
+
+    if not entry:
+        return jsonify({"error": "Entry not found"}), 404
+
+    return jsonify({
+        "message": "Sentiment entry retrieved",
+        "data": {
+            "id": entry.id,
+            "text": entry.text,
+            "sentiment": entry.sentiment,
+            "score": entry.score,
+            "timestamp": str(entry.timestamp)
+        }
+    }), 200
+
 
 # Update Sentiment Entry (API)
 @sentiment_bp.route('/sentiment/<int:id>', methods=['PUT'])
 def update_sentiment(id):
     entry = SentimentAnalysis.query.get(id)
+
     if not entry:
         return jsonify({"error": "Entry not found"}), 404
 
     data = request.get_json()
+
     if not data or 'text' not in data:
         return jsonify({"error": "Invalid input"}), 400
 
     entry.text = data['text'].strip()
     entry.score = TextBlob(entry.text).sentiment.polarity
-    entry.sentiment = "Positive" if entry.score > 0 else "Negative" if entry.score < 0 else "Neutral"
+    entry.sentiment = (
+        "Positive" if entry.score > 0
+        else "Negative" if entry.score < 0
+        else "Neutral"
+    )
 
     db.session.commit()
 
-    return jsonify({"message": "Sentiment entry updated", "data": {"id": entry.id, "text": entry.text, "sentiment": entry.sentiment, "score": entry.score}}), 200
+    return jsonify({
+        "message": "Sentiment entry updated",
+        "data": {
+            "id": entry.id,
+            "text": entry.text,
+            "sentiment": entry.sentiment,
+            "score": entry.score
+        }
+    }), 200
+
 
 # Delete Sentiment Entry (API)
 @sentiment_bp.route('/sentiment/<int:id>', methods=['DELETE'])
 def delete_sentiment(id):
     entry = SentimentAnalysis.query.get(id)
+
     if not entry:
         return jsonify({"error": "Entry not found"}), 404
 
     db.session.delete(entry)
     db.session.commit()
 
-    return jsonify({"message": "Sentiment entry deleted"}), 200
+    return jsonify({
+        "message": "Sentiment entry deleted"
+    }), 200

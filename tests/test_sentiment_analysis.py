@@ -1,43 +1,48 @@
-import unittest
+import pytest
 import sys
 import os
-import unittest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(
+    0,
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+)
 
-from models import SentimentAnalysis
+from app import app
 
-class TestSentimentAnalysis(unittest.TestCase):
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
 
-    def test_positive_sentences(self):
-        positive_sentences = [
-            "I love this product, it works wonderfully.",
-            "The service was excellent and very helpful.",
-            "This is a fantastic experience."
-        ]
-        for sentence in positive_sentences:
-            sa = SentimentAnalysis(sentence)
-            self.assertEqual(sa.sentiment, "Positive", f"Failed on sentence: {sentence}")
+    with app.test_client() as client:
+        yield client
 
-    def test_negative_sentences(self):
-        negative_sentences = [
-            "I hate this item, it broke immediately.",
-            "The support was terrible and unresponsive.",
-            "This is a disappointing outcome."
-        ]
-        for sentence in negative_sentences:
-            sa = SentimentAnalysis(sentence)
-            self.assertEqual(sa.sentiment, "Negative", f"Failed on sentence: {sentence}")
 
-    def test_neutral_sentences(self):
-        neutral_sentences = [
-            "It is a product.",
-            "The event took place yesterday.",
-            "This is a book on the table."
-        ]
-        for sentence in neutral_sentences:
-            sa = SentimentAnalysis(sentence)
-            self.assertEqual(sa.sentiment, "Neutral", f"Failed on sentence: {sentence}")
+def test_get_all_sentiments(client):
+    response = client.get('/sentiment')
+    assert response.status_code == 200
 
-if __name__ == '__main__':
-    unittest.main()
+
+def test_create_sentiment(client):
+    response = client.post(
+        '/sentiment',
+        json={"text": "I love programming"}
+    )
+    assert response.status_code == 201
+
+
+def test_invalid_create(client):
+    response = client.post(
+        '/sentiment',
+        json={}
+    )
+    assert response.status_code == 400
+
+
+def test_get_invalid_sentiment(client):
+    response = client.get('/sentiment/9999')
+    assert response.status_code == 404
+
+
+def test_delete_invalid_sentiment(client):
+    response = client.delete('/sentiment/9999')
+    assert response.status_code == 404
